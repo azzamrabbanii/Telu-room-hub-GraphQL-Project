@@ -1,0 +1,11 @@
+type Room {
+  id: ID!
+  name: String!
+  capacity: Int!
+  facility: [String!]!
+  isAvailable: Boolean!
+}
+
+type Query {
+  getAvailableRooms: [Room!]!
+}
