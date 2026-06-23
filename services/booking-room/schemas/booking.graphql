@@ -1,0 +1,30 @@
+# Tambahkan tipe Query formalitas ini agar server mau menyala
+type Query {
+  bookingPlaceholder: String
+}
+
+type Room {
+  id: ID!
+  name: String!
+}
+
+type Booking {
+  id: ID!
+  roomId: ID!
+  studentName: String!
+  studentId: String!
+  bookingTime: String!
+  status: String!
+  room: Room
+}
+
+type Mutation {
+  createBooking(
+    roomId: ID!
+    studentName: String!
+    studentId: String!
+    bookingTime: String!
+  ): Booking!
+
+  cancelBooking(bookingId: ID!): Booking!
+}

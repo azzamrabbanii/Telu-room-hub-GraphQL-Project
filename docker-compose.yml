@@ -1,0 +1,34 @@
+
+services:
+  # Service 1: Mengurus pencarian ruangan kosong (Port 4001)
+  view-available-room-service:
+    build:
+      context: ./services/view-available-room
+      dockerfile: Dockerfile
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./services/view-available-room:/usr/src/app
+      - /usr/src/app/node_modules
+
+  # Service 2: Mengurus transaksi booking mahasiswa (Port 4002)
+  booking-room-service:
+    build:
+      context: ./services/booking-room
+      dockerfile: Dockerfile
+    ports:
+      - "4002:4002"
+    volumes:
+      - ./services/booking-room:/usr/src/app
+      - /usr/src/app/node_modules
+
+  # Service 3: Mengurus pembuatan/hapus ruangan oleh admin (Port 4003)
+  room-management-service:
+    build:
+      context: ./services/room-management
+      dockerfile: Dockerfile
+    ports:
+      - "4003:4003"
+    volumes:
+      - ./services/room-management:/usr/src/app
+      - /usr/src/app/node_modules
