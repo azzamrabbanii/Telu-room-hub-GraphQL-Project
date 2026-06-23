@@ -1,9 +1,19 @@
-const { rooms } = require('../db');
+const db = require('../db');
 
 const rootResolver = {
   Query: {
-    getAvailableRooms: () => {
-      return rooms.filter(room => room.isAvailable === true);
+    getAvailableRooms: async () => {
+      try {
+        const [rows] = await db.query('SELECT * FROM rooms WHERE isAvailable = 1');
+        
+        return rows.map(room => ({
+          ...room,
+          facility: room.facility ? room.facility.split(', ') : [],
+          isAvailable: !!room.isAvailable
+        }));
+      } catch (error) {
+        throw new Error(`Gagal mengambil data ruangan: ${error.message}`);
+      }
     }
   }
 };

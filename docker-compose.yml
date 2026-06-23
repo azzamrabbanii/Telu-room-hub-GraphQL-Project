@@ -1,6 +1,4 @@
-
 services:
-  # Service 1: Mengurus pencarian ruangan kosong (Port 4001)
   view-available-room-service:
     build:
       context: ./services/view-available-room
@@ -10,8 +8,9 @@ services:
     volumes:
       - ./services/view-available-room:/usr/src/app
       - /usr/src/app/node_modules
+    depends_on:
+      - db
 
-  # Service 2: Mengurus transaksi booking mahasiswa (Port 4002)
   booking-room-service:
     build:
       context: ./services/booking-room
@@ -21,8 +20,9 @@ services:
     volumes:
       - ./services/booking-room:/usr/src/app
       - /usr/src/app/node_modules
+    depends_on:
+      - db
 
-  # Service 3: Mengurus pembuatan/hapus ruangan oleh admin (Port 4003)
   room-management-service:
     build:
       context: ./services/room-management
@@ -32,3 +32,33 @@ services:
     volumes:
       - ./services/room-management:/usr/src/app
       - /usr/src/app/node_modules
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: telu-room-hub-db
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: telu_room_hub_eai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: telu-room-hub-phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ""
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:

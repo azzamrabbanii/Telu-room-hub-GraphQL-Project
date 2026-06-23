@@ -1,9 +1,15 @@
-let rooms = [
-  { id: "KU3.02.01", name: "Kelas KU3.02.01", capacity: 40, facility: ["Proyektor", "AC", "Whiteboard"], isAvailable: true },
-  { id: "FIT.01.05", name: "Laboratorium Multimedia FIT", capacity: 30, facility: ["PC High-End", "AC", "Drawing Tablet"], isAvailable: true },
-  { id: "KU1.01.02", name: "Auditorium GKU", capacity: 150, facility: ["Sound System", "Panggung", "AC central"], isAvailable: false }
-];
+const mysql = require('mysql2');
 
-let bookings = [];
+const pool = mysql.createPool({
+  host: 'db',             
+  user: 'root',
+  password: '',
+  database: 'telu_room_hub_eai',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
 
-module.exports = { rooms, bookings };
+const db = pool.promise();
+
+module.exports = db;

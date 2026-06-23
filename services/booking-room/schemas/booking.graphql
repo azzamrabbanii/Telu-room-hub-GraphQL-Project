@@ -1,4 +1,3 @@
-# Tambahkan tipe Query formalitas ini agar server mau menyala
 type Query {
   bookingPlaceholder: String
 }

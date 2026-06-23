@@ -3,19 +3,530 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Tel-U Room Hub - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tel-U Room Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cdcdcd;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a6a6a6;
+        }
+    </style>
 </head>
 
-<body>
-    <h1>Daftar Ruangan Kampus Tersedia</h1>
-    <hr>
+<body class="bg-[#f9fafb] text-slate-800 antialiased min-h-screen flex flex-col md:flex-row">
 
-    <div id="rooms-container">
-        <p>Memuat data ruangan...</p>
+    <aside class="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-200 flex flex-col shrink-0">
+        <div class="p-6 border-b border-gray-100 flex items-center justify-between md:justify-start gap-3">
+            <div class="w-8 h-8 bg-[#800000] rounded flex items-center justify-center text-white font-bold text-lg">T
+            </div>
+            <div>
+                <h1 class="font-bold text-lg tracking-tight text-slate-900">Tel-U Room Hub</h1>
+                <p class="text-xs text-gray-500 font-medium">Facility Booking System</p>
+            </div>
+        </div>
+
+        <nav class="p-4 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-visible navigation-tabs">
+            <button onclick="switchTab('student-view')" id="tab-student-view"
+                class="tab-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap bg-[#800000] text-white w-full text-left">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                Student View
+            </button>
+            <button onclick="switchTab('admin-view')" id="tab-admin-view"
+                class="tab-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap text-slate-600 hover:bg-gray-50 hover:text-slate-900 w-full text-left">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Admin Management
+            </button>
+        </nav>
+
+        <div class="mt-auto p-4 border-t border-gray-100 hidden md:block">
+            <p class="text-xs text-gray-400 text-center">© 2026 Tel-U Room Hub.<br>All rights reserved.</p>
+        </div>
+    </aside>
+
+    <main class="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full transition-all duration-300">
+
+        <section id="student-view" class="view-section space-y-8">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">Available Rooms</h2>
+                    <p class="text-slate-500 text-sm mt-1">Find and reserve a study or discussion room effortlessly.</p>
+                </div>
+                <div class="relative w-full md:w-80">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </span>
+                    <input type="text" id="search-input" oninput="filterRooms()"
+                        class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#800000] focus:border-transparent shadow-sm transition"
+                        placeholder="Search by name or facility...">
+                </div>
+            </div>
+
+            <div id="rooms-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        </section>
+
+        <section id="admin-view" class="view-section space-y-8 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">Room Management</h2>
+                    <p class="text-slate-500 text-sm mt-1">Monitor capacity, availability status, and modify inventory
+                        listings.</p>
+                </div>
+                <button onclick="openModal('add-room-modal')"
+                    class="inline-flex items-center gap-2 bg-[#800000] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#660000] shadow-sm transition duration-200 self-start sm:self-auto">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add New Room
+                </button>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-gray-50 border-b border-gray-200 text-slate-600 text-xs uppercase font-semibold tracking-wider">
+                                <th class="px-6 py-4">Room ID</th>
+                                <th class="px-6 py-4">Room Name</th>
+                                <th class="px-6 py-4">Capacity</th>
+                                <th class="px-6 py-4">Facilities</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body" class="divide-y divide-gray-100 text-sm">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="booking-modal"
+        class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity duration-300">
+        <div
+            class="bg-white rounded-2xl w-full max-w-md shadow-xl transform transition-all duration-300 scale-95 opacity-0 modal-content overflow-hidden">
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-900">Book Room Reservation</h3>
+                <button onclick="closeModal('booking-modal')" class="text-gray-400 hover:text-gray-600 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="booking-form" onsubmit="handleBookingSubmit(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Room
+                        ID</label>
+                    <input type="text" id="book-room-id" disabled
+                        class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-500 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Student
+                        Name</label>
+                    <input type="text" id="book-student-name" required
+                        class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#800000] focus:border-transparent transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Student ID
+                        (NIM)</label>
+                    <input type="text" id="book-student-id" required
+                        class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#800000] focus:border-transparent transition"
+                        placeholder="e.g. 1202220001">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Booking Date
+                        & Time</label>
+                    <input type="datetime-local" id="book-datetime" required
+                        class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#800000] focus:border-transparent transition">
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeModal('booking-modal')"
+                        class="flex-1 px-4 py-2.5 border border-gray-200 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 transition">Cancel</button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-2.5 bg-[#800000] text-white rounded-xl text-sm font-medium hover:bg-[#660000] transition shadow-sm">Confirm
+                        Booking</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <br>
-    <a href="booking.html"><button>Pesan Ruangan Sekarang</button></a>
+    <div id="add-room-modal"
+        class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity duration-300">
+        <div
+            class="bg-white rounded-2xl w-full max-w-md shadow-xl transform transition-all duration-300 scale-95 opacity-0 modal-content overflow-hidden">
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-900">Add New Room Configuration</h3>
+                <button onclick="closeModal('add-room-modal')" class="text-gray-400 hover:text-gray-600 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="add-room-form" onsubmit="handleAddRoomSubmit(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Room
+                        ID</label>
+                    <input type="text" id="add-room-id" required
+                        class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#800000] focus:border-transparent transition"
+                        placeholder="e.g. KU3.05.02">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Room
+                        Name</label>
+                    <input type="text" id="add-room-name" required
+                        class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#800000] focus:border-transparent transition"
+                        placeholder="e.g. Integrated Lab Sandbox">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Capacity
+                        (Persons)</label>
+                    <input type="number" id="add-room-capacity" required min="1"
+                        class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#800000] focus:border-transparent transition"
+                        placeholder="e.g. 30">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Facilities
+                        (Comma Separated)</label>
+                    <input type="text" id="add-room-facilities" required
+                        class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#800000] focus:border-transparent transition"
+                        placeholder="e.g. Projector, Whiteboard, High-Speed Wi-Fi">
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeModal('add-room-modal')"
+                        class="flex-1 px-4 py-2.5 border border-gray-200 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 transition">Cancel</button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-2.5 bg-[#800000] text-white rounded-xl text-sm font-medium hover:bg-[#660000] transition shadow-sm">Save
+                        Listing</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast"
+        class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-lg text-sm transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3">
+        <span id="toast-message">Action successful!</span>
+    </div>
+
+    <script>
+            const PORTS = {
+                VIEW_ROOM: 'http://localhost:4001',
+                BOOKING: 'http://localhost:4002',
+                MANAGEMENT: 'http://localhost:4003'
+            };
+
+            let cachedRooms = [];
+
+            async function queryGraphQL(url, query, variables = {}) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query, variables })
+                    });
+                    const result = await response.json();
+                    if (result.errors) {
+                        throw new Error(result.errors[0].message);
+                    }
+                    return result.data;
+                } catch (error) {
+                    console.error("GraphQL Fetch Error:", error);
+                    showToast(`API Error: ${error.message}`, true);
+                    return null;
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                fetchAndRenderAllData();
+            });
+
+            async function fetchAndRenderAllData() {
+                
+                const availableQuery = `query { getAvailableRooms { id name capacity facility isAvailable } }`;
+                const availableData = await queryGraphQL(PORTS.VIEW_ROOM, availableQuery);
+
+                const allQuery = `query { getAllRooms { id name capacity facility isAvailable } }`;
+                const allData = await queryGraphQL(PORTS.MANAGEMENT, allQuery);
+
+                if (availableData && availableData.getAvailableRooms) {
+                 
+                    const mappedAvailable = availableData.getAvailableRooms.map(r => ({
+                        id: r.id, name: r.name, capacity: r.capacity, facilities: r.facility, available: r.isAvailable
+                    }));
+                    renderStudentGrid(mappedAvailable);
+                }
+
+                if (allData && allData.getAllRooms) {
+                    cachedRooms = allData.getAllRooms.map(r => ({
+                        id: r.id, name: r.name, capacity: r.capacity, facilities: r.facility, available: r.isAvailable
+                    }));
+                    renderAdminTable(cachedRooms);
+                }
+            }
+
+            function switchTab(viewId) {
+                document.querySelectorAll('.view-section').forEach(section => section.classList.add('hidden'));
+                document.getElementById(viewId).classList.remove('hidden');
+
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('bg-[#800000]', 'text-white');
+                    btn.classList.add('text-slate-600', 'hover:bg-gray-50', 'hover:text-slate-900');
+                });
+
+                const activeTab = document.getElementById(`tab-${viewId}`);
+                activeTab.classList.remove('text-slate-600', 'hover:bg-gray-50', 'hover:text-slate-900');
+                activeTab.classList.add('bg-[#800000]', 'text-white');
+
+                fetchAndRenderAllData();
+            }
+
+            function renderStudentGrid(data) {
+                const gridContainer = document.getElementById('rooms-grid');
+                gridContainer.innerHTML = '';
+
+                if (data.length === 0) {
+                    gridContainer.innerHTML = `
+            <div class="col-span-full py-12 text-center bg-white border border-dashed border-gray-200 rounded-2xl">
+                <p class="text-sm text-gray-500">No rooms matching the criteria were found.</p>
+            </div>
+        `;
+                    return;
+                }
+
+                data.forEach(room => {
+                    const badgeContainer = room.facilities.map(f => `<span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-md font-medium tracking-wide">${f}</span>`).join('');
+
+                    const cardHtml = `
+            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition duration-200 flex flex-col group">
+                <div class="p-6 space-y-4 flex-1">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <span class="text-xs font-mono font-semibold text-slate-400 block">${room.id}</span>
+                            <h4 class="text-base font-bold text-slate-900 mt-0.5 group-hover:text-[#800000] transition duration-150">${room.name}</h4>
+                        </div>
+                        <span class="shrink-0 inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full ${room.available ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
+                            ${room.available ? 'Available' : 'Reserved'}
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-sm text-slate-500">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        Max. Capacity: <span class="font-semibold text-slate-700">${room.capacity} Persons</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                        ${badgeContainer}
+                    </div>
+                </div>
+                <div class="p-4 border-t border-gray-50 bg-gray-50/50">
+                    <button onclick="openBookingModal('${room.id}')" ${!room.available ? 'disabled' : ''} class="w-full text-center py-2 px-4 rounded-xl text-sm font-semibold transition duration-200 ${room.available ? 'bg-white border border-gray-200 text-slate-800 hover:border-[#800000] hover:text-[#800000] shadow-sm' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}">
+                        ${room.available ? 'Book Room' : 'Fully Reserved'}
+                    </button>
+                </div>
+            </div>
+        `;
+                    gridContainer.innerHTML += cardHtml;
+                });
+            }
+
+            function renderAdminTable(data) {
+                const tableBody = document.getElementById('admin-table-body');
+                tableBody.innerHTML = '';
+
+                if (data.length === 0) {
+                    tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-6 py-12 text-center text-sm text-gray-400">No managed facility records available.</td>
+            </tr>
+        `;
+                    return;
+                }
+
+                data.forEach(room => {
+                    const inlineBadges = room.facilities.map(f => `<span class="inline-block bg-gray-50 text-gray-500 border border-gray-100 text-xs px-2 py-0.5 rounded mr-1 mb-1">${f}</span>`).join('');
+
+                    const trHtml = `
+            <tr class="hover:bg-gray-50/70 transition duration-150">
+                <td class="px-6 py-4 font-mono text-xs font-semibold text-slate-600">${room.id}</td>
+                <td class="px-6 py-4 font-semibold text-slate-900">${room.name}</td>
+                <td class="px-6 py-4 text-slate-600">${room.capacity} Pax</td>
+                <td class="px-6 py-4 max-w-xs">${inlineBadges}</td>
+                <td class="px-6 py-4">
+                    <span class="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${room.available ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
+                        ${room.available ? 'Active / Open' : 'Reserved'}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <button onclick="handleDeleteRoom('${room.id}')" class="text-rose-600 hover:text-rose-800 font-medium text-xs transition duration-150 inline-flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        `;
+                    tableBody.innerHTML += trHtml;
+                });
+            }
+
+            function filterRooms() {
+                const query = document.getElementById('search-input').value.toLowerCase().trim();
+                const filtered = cachedRooms.filter(room =>
+                    room.name.toLowerCase().includes(query) ||
+                    room.id.toLowerCase().includes(query) ||
+                    room.facilities.some(f => f.toLowerCase().includes(query))
+                );
+                renderStudentGrid(filtered.filter(r => r.available));
+            }
+
+            function openModal(id) {
+                const modal = document.getElementById(id);
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0');
+                    modal.querySelector('.modal-content').classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }
+
+            function closeModal(id) {
+                const modal = document.getElementById(id);
+                modal.querySelector('.modal-content').classList.remove('scale-100', 'opacity-100');
+                modal.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 200);
+            }
+
+            function openBookingModal(roomId) {
+                document.getElementById('book-room-id').value = roomId;
+                openModal('booking-modal');
+            }
+
+            async function handleBookingSubmit(event) {
+                event.preventDefault();
+                const roomId = document.getElementById('book-room-id').value;
+                const studentName = document.getElementById('book-student-name').value.trim();
+                const studentId = document.getElementById('book-student-id').value.trim();
+                const bookingTime = document.getElementById('book-datetime').value.replace('T', ' ');
+
+                const bookingMutation = `
+        mutation Create($roomId: ID!, $studentName: String!, $studentId: String!, $bookingTime: String!) {
+            createBooking(roomId: $roomId, studentName: $studentName, studentId: $studentId, bookingTime: $bookingTime) {
+                id status
+            }
+        }
+    `;
+
+                const variables = { roomId, studentName, studentId, bookingTime };
+                const res = await queryGraphQL(PORTS.BOOKING, bookingMutation, variables);
+
+                if (res && res.createBooking) {
+                    closeModal('booking-modal');
+                    document.getElementById('booking-form').reset();
+                    showToast(`Room ${roomId} successfully reserved with ID: ${res.createBooking.id}.`);
+                    fetchAndRenderAllData();
+                }
+            }
+
+            async function handleAddRoomSubmit(event) {
+                event.preventDefault();
+                const id = document.getElementById('add-room-id').value.trim();
+                const name = document.getElementById('add-room-name').value.trim();
+                const capacity = parseInt(document.getElementById('add-room-capacity').value);
+                const facilitiesInput = document.getElementById('add-room-facilities').value;
+
+                const facility = facilitiesInput.split(',').map(item => item.trim()).filter(item => item !== '');
+
+                const addRoomMutation = `
+        mutation Add($id: ID!, $name: String!, $capacity: Int!, $facility: [String!]!) {
+            addRoom(id: $id, name: $name, capacity: $capacity, facility: $facility) {
+                id name
+            }
+        }
+    `;
+
+                const variables = { id, name, capacity, facility };
+                const res = await queryGraphQL(PORTS.MANAGEMENT, addRoomMutation, variables);
+
+                if (res && res.addRoom) {
+                    closeModal('add-room-modal');
+                    document.getElementById('add-room-form').reset();
+                    showToast(`Room ${id} successfully added to central inventory.`);
+                    fetchAndRenderAllData();
+                }
+            }
+
+            async function handleDeleteRoom(roomId) {
+                if (confirm(`Are you sure you want to remove room ${roomId} from the hub database?`)) {
+                    const deleteRoomMutation = `
+            mutation Delete($id: ID!) {
+                deleteRoom(id: $id)
+            }
+        `;
+
+                    const res = await queryGraphQL(PORTS.MANAGEMENT, deleteRoomMutation, { id: roomId });
+
+                    if (res && res.deleteRoom) {
+                        showToast(`Room ${roomId} was permanently deleted.`);
+                        fetchAndRenderAllData();
+                    }
+                }
+            }
+
+            function showToast(message, isError = false) {
+                const toast = document.getElementById('toast');
+                const msgSpan = document.getElementById('toast-message');
+
+                msgSpan.innerText = message;
+                if (isError) {
+                    toast.classList.remove('bg-slate-900');
+                    toast.classList.add('bg-rose-600');
+                } else {
+                    toast.classList.remove('bg-rose-600');
+                    toast.classList.add('bg-slate-900');
+                }
+
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 4000);
+            }
+    </script>
 </body>
 
 </html>
