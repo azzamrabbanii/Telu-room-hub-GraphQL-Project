@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tel-U Room Hub - Interactive API Docs</title>
+    <!-- Include Swagger UI CSS from unpkg -->
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui.css" />
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin: 0;
+            background: #f8fafc;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* Top branding bar */
+        .brand-header {
+            background-color: #800000;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .brand-logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            background-color: white;
+            color: #800000;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        .brand-title-wrap h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .brand-title-wrap p {
+            margin: 0;
+            font-size: 11px;
+            color: #ffcccc;
+            font-weight: 500;
+        }
+
+        .badge-graphql {
+            background-color: #e535ab;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        /* Customize Swagger UI to match Tel-U color scheme */
+        .swagger-ui .topbar {
+            display: none;
+        }
+
+        .swagger-ui .info {
+            margin: 30px 0 20px 0;
+        }
+
+        .swagger-ui .info .title {
+            color: #1e293b;
+        }
+
+        .swagger-ui .opblock.opblock-post {
+            border-color: #c084fc;
+            background: rgba(243, 232, 255, 0.15);
+        }
+
+        .swagger-ui .opblock.opblock-post .opblock-summary-method {
+            background: #a855f7;
+        }
+
+        .swagger-ui .opblock.opblock-post .opblock-summary {
+            border-color: #e9d5ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="brand-header">
+        <div class="brand-logo-container">
+            <div class="brand-logo">T</div>
+            <div class="brand-title-wrap">
+                <h1>Tel-U Room Hub</h1>
+                <p>Interactive API Playground (Offline Mode)</p>
+            </div>
+        </div>
+        <div class="badge-graphql">GRAPHQL WRAPPER</div>
+    </div>
+
+    <!-- Container for Swagger UI -->
+    <div id="swagger-ui"></div>
+
+    <!-- Include Swagger UI bundle and presets -->
+    <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            // Embedded OpenAPI JSON spec to prevent browser CORS issues (when opening via file://)
+            const spec = {
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Tel-U Room Hub GraphQL API (OpenAPI Wrapper)",
+    "version": "1.0.0",
+    "description": "Dokumentasi API Tel-U Room Hub. \n\nKarena proyek ini menggunakan arsitektur **GraphQL (Apollo Server 3)** yang berjalan pada 3 microservices terpisah, semua pemanggilan API yang asli dilakukan menggunakan metode **HTTP POST** ke root URL (`/`) dari masing-masing service dengan format JSON payload `{ \"query\": \"...\", \"variables\": {} }`.\n\nUntuk memudahkan pengujian dan visualisasi menggunakan Swagger, dokumentasi ini memetakan query dan mutation menjadi endpoint-endpoint virtual yang terpisah berdasarkan fungsionalitasnya.\n\n### Alamat Microservices:\n* **View Available Room Service:** `http://localhost:4001` (Port 4001)\n* **Booking Room Service:** `http://localhost:4002` (Port 4002)\n* **Room Management Service:** `http://localhost:4003` (Port 4003)\n"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4001",
+      "description": "View Available Room Service (Port 4001)"
+    },
+    {
+      "url": "http://localhost:4002",
+      "description": "Booking Room Service (Port 4002)"
+    },
+    {
+      "url": "http://localhost:4003",
+      "description": "Room Management Service (Port 4003)"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Student Room View",
+      "description": "Memantau dan menyaring ruangan yang tersedia untuk dipesan."
+    },
+    {
+      "name": "Booking Reservations",
+      "description": "Alur pemesanan (booking) ruangan dan pembatalan pemesanan."
+    },
+    {
+      "name": "Room Management (Admin)",
+      "description": "Pengelolaan data inventaris ruangan (Melihat semua, menambah, menghapus)."
+    }
+  ],
+  "paths": {
+    "/getAvailableRooms": {
+      "post": {
+        "summary": "Mendapatkan Semua Ruangan yang Tersedia (Student View)",
+        "tags": [
+          "Student Room View"
+        ],
+        "description": "Mengambil daftar semua ruangan yang statusnya masih tersedia (`isAvailable: true`).\n\n**Target Server:** `http://localhost:4001` (View Available Room Service)\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphQLRequest"
+              },
+              "example": {
+                "query": "query GetAvailableRooms {\n  getAvailableRooms {\n    id\n    name\n    capacity\n    facility\n    isAvailable\n  }\n}\n"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat daftar ruangan kosong.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAvailableRoomsResponse"
+                },
+                "example": {
+                  "data": {
+                    "getAvailableRooms": [
+                      {
+                        "id": "KU3.05.01",
+                        "name": "Integrated Lab Sandbox",
+                        "capacity": 30,
+                        "facility": [
+                          "Projector",
+                          "Whiteboard",
+                          "High-Speed Wi-Fi",
+                          "AC"
+                        ],
+                        "isAvailable": true
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/createBooking": {
+      "post": {
+        "summary": "Melakukan Reservasi Ruangan (Booking)",
+        "tags": [
+          "Booking Reservations"
+        ],
+        "description": "Membuat reservasi baru untuk ruangan tertentu. Setelah booking berhasil dibuat, status ruangan otomatis berubah menjadi tidak tersedia (`isAvailable: false`).\n\n**Target Server:** `http://localhost:4002` (Booking Room Service)\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphQLRequest"
+              },
+              "example": {
+                "query": "mutation CreateBooking($roomId: ID!, $studentName: String!, $studentId: String!, $bookingTime: String!) {\n  createBooking(roomId: $roomId, studentName: $studentName, studentId: $studentId, bookingTime: $bookingTime) {\n    id\n    roomId\n    studentName\n    studentId\n    bookingTime\n    status\n  }\n}\n",
+                "variables": {
+                  "roomId": "KU3.05.01",
+                  "studentName": "Azzam Rabbani",
+                  "studentId": "1202220001",
+                  "bookingTime": "2026-06-25 10:00:00"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking berhasil dibuat.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBookingResponse"
+                },
+                "example": {
+                  "data": {
+                    "createBooking": {
+                      "id": "1",
+                      "roomId": "KU3.05.01",
+                      "studentName": "Azzam Rabbani",
+                      "studentId": "1202220001",
+                      "bookingTime": "2026-06-25 10:00:00",
+                      "status": "CONFIRMED"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cancelBooking": {
+      "post": {
+        "summary": "Pembatalan Reservasi Ruangan (Cancel Booking)",
+        "tags": [
+          "Booking Reservations"
+        ],
+        "description": "Membatalkan booking yang sudah terkonfirmasi berdasarkan ID Booking. Status ruangan akan dikembalikan menjadi tersedia (`isAvailable: true`).\n\n**Target Server:** `http://localhost:4002` (Booking Room Service)\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphQLRequest"
+              },
+              "example": {
+                "query": "mutation CancelBooking($bookingId: ID!) {\n  cancelBooking(bookingId: $bookingId) {\n    id\n    roomId\n    studentName\n    status\n  }\n}\n",
+                "variables": {
+                  "bookingId": "1"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking berhasil dibatalkan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelBookingResponse"
+                },
+                "example": {
+                  "data": {
+                    "cancelBooking": {
+                      "id": "1",
+                      "roomId": "KU3.05.01",
+                      "studentName": "Azzam Rabbani",
+                      "status": "CANCELLED"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getAllRooms": {
+      "post": {
+        "summary": "Mendapatkan Semua Daftar Ruangan (Admin View)",
+        "tags": [
+          "Room Management (Admin)"
+        ],
+        "description": "Mengambil seluruh inventaris ruangan, baik yang kosong maupun yang sedang dibooking.\n\n**Target Server:** `http://localhost:4003` (Room Management Service)\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphQLRequest"
+              },
+              "example": {
+                "query": "query GetAllRooms {\n  getAllRooms {\n    id\n    name\n    capacity\n    facility\n    isAvailable\n  }\n}\n"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat semua daftar ruangan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllRoomsResponse"
+                },
+                "example": {
+                  "data": {
+                    "getAllRooms": [
+                      {
+                        "id": "KU3.05.01",
+                        "name": "Integrated Lab Sandbox",
+                        "capacity": 30,
+                        "facility": [
+                          "Projector",
+                          "Whiteboard",
+                          "High-Speed Wi-Fi",
+                          "AC"
+                        ],
+                        "isAvailable": true
+                      },
+                      {
+                        "id": "KU3.05.02",
+                        "name": "Discussion Room 2A",
+                        "capacity": 10,
+                        "facility": [
+                          "Whiteboard",
+                          "High-Speed Wi-Fi",
+                          "AC"
+                        ],
+                        "isAvailable": false
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/addRoom": {
+      "post": {
+        "summary": "Menambahkan Ruangan Baru ke Inventaris (Admin)",
+        "tags": [
+          "Room Management (Admin)"
+        ],
+        "description": "Mendaftarkan ruangan baru beserta kelengkapannya ke dalam database. Secara default ruangan baru akan berstatus tersedia (`isAvailable: true`).\n\n**Target Server:** `http://localhost:4003` (Room Management Service)\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphQLRequest"
+              },
+              "example": {
+                "query": "mutation AddRoom($id: ID!, $name: String!, $capacity: Int!, $facility: [String!]!) {\n  addRoom(id: $id, name: $name, capacity: $capacity, facility: $facility) {\n    id\n    name\n    capacity\n    facility\n    isAvailable\n  }\n}\n",
+                "variables": {
+                  "id": "KU3.05.03",
+                  "name": "Discussion Room 2B",
+                  "capacity": 12,
+                  "facility": [
+                    "Projector",
+                    "Whiteboard",
+                    "High-Speed Wi-Fi",
+                    "AC"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ruangan berhasil ditambahkan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddRoomResponse"
+                },
+                "example": {
+                  "data": {
+                    "addRoom": {
+                      "id": "KU3.05.03",
+                      "name": "Discussion Room 2B",
+                      "capacity": 12,
+                      "facility": [
+                        "Projector",
+                        "Whiteboard",
+                        "High-Speed Wi-Fi",
+                        "AC"
+                      ],
+                      "isAvailable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deleteRoom": {
+      "post": {
+        "summary": "Menghapus Ruangan dari Inventaris (Admin)",
+        "tags": [
+          "Room Management (Admin)"
+        ],
+        "description": "Menghapus data ruangan dari database berdasarkan ID Ruangan.\n\n**Target Server:** `http://localhost:4003` (Room Management Service)\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphQLRequest"
+              },
+              "example": {
+                "query": "mutation DeleteRoom($id: ID!) {\n  deleteRoom(id: $id)\n}\n",
+                "variables": {
+                  "id": "KU3.05.03"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ruangan berhasil dihapus.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteRoomResponse"
+                },
+                "example": {
+                  "data": {
+                    "deleteRoom": "Ruangan dengan ID KU3.05.03 berhasil dihapus."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GraphQLRequest": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Dokumen GraphQL query atau mutation."
+          },
+          "variables": {
+            "type": "object",
+            "description": "Variabel yang dilewatkan ke query/mutation.",
+            "nullable": true
+          }
+        }
+      },
+      "Room": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID unik ruangan (berfungsi sebagai kode ruangan)."
+          },
+          "name": {
+            "type": "string",
+            "description": "Nama lengkap ruangan."
+          },
+          "capacity": {
+            "type": "integer",
+            "description": "Kapasitas maksimum ruangan dalam satuan orang."
+          },
+          "facility": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Daftar fasilitas yang tersedia di dalam ruangan."
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "description": "Menandakan ketersediaan ruangan untuk di-booking."
+          }
+        }
+      },
+      "Booking": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID unik transaksi pemesanan."
+          },
+          "roomId": {
+            "type": "string",
+            "description": "ID ruangan yang dipesan."
+          },
+          "studentName": {
+            "type": "string",
+            "description": "Nama mahasiswa yang memesan."
+          },
+          "studentId": {
+            "type": "string",
+            "description": "NIM mahasiswa yang memesan."
+          },
+          "bookingTime": {
+            "type": "string",
+            "description": "Waktu pemesanan (format YYYY-MM-DD HH:MM:SS)."
+          },
+          "status": {
+            "type": "string",
+            "description": "Status pemesanan (CONFIRMED, CANCELLED)."
+          }
+        }
+      },
+      "GetAvailableRoomsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "getAvailableRooms": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateBookingResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "createBooking": {
+                "$ref": "#/components/schemas/Booking"
+              }
+            }
+          }
+        }
+      },
+      "CancelBookingResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "cancelBooking": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "roomId": {
+                    "type": "string"
+                  },
+                  "studentName": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "GetAllRoomsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "getAllRooms": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AddRoomResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "addRoom": {
+                "$ref": "#/components/schemas/Room"
+              }
+            }
+          }
+        }
+      },
+      "DeleteRoomResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "deleteRoom": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+            // Build Swagger UI
+            const ui = SwaggerUIBundle({
+                spec: spec,
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "BaseLayout"
+            });
+            window.ui = ui;
+        };
+    </script>
+</body>
+
+</html>
