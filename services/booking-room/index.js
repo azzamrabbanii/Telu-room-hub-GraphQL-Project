@@ -15,7 +15,50 @@ const server = new ApolloServer({
     return { message: err.message };
   },
   plugins: [
-    ApolloServerPluginLandingPageGraphQLPlayground()
+    ApolloServerPluginLandingPageGraphQLPlayground({
+      tabs: [
+        {
+          endpoint: 'http://localhost:4002/',
+          name: '2. Create Booking',
+          query: `mutation CreateBooking($roomId: ID!, $studentName: String!, $studentId: String!, $bookingTime: String!) {
+  createBooking(
+    roomId: $roomId
+    studentName: $studentName
+    studentId: $studentId
+    bookingTime: $bookingTime
+  ) {
+    id
+    roomId
+    studentName
+    studentId
+    bookingTime
+    status
+  }
+}`,
+          variables: `{
+  "roomId": "KU3.05.01",
+  "studentName": "Azzam Rabbani",
+  "studentId": "1202220001",
+  "bookingTime": "2026-06-25 10:00:00"
+}`
+        },
+        {
+          endpoint: 'http://localhost:4002/',
+          name: '3. Cancel Booking',
+          query: `mutation CancelBooking($bookingId: ID!) {
+  cancelBooking(bookingId: $bookingId) {
+    id
+    roomId
+    studentName
+    status
+  }
+}`,
+          variables: `{
+  "bookingId": "1"
+}`
+        }
+      ]
+    })
   ]
 });
 

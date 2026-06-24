@@ -12,7 +12,23 @@ const server = new ApolloServer({
   typeDefs, 
   resolvers,
   plugins: [
-    ApolloServerPluginLandingPageGraphQLPlayground()
+    ApolloServerPluginLandingPageGraphQLPlayground({
+      tabs: [
+        {
+          endpoint: 'http://localhost:4001/',
+          name: '1. View Available Rooms',
+          query: `query GetAvailableRooms {
+  getAvailableRooms {
+    id
+    name
+    capacity
+    facility
+    isAvailable
+  }
+}`
+        }
+      ]
+    })
   ]
 });
 
