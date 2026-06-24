@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServerPluginLandingPageGraphQLPlayground } = require('apollo-server-core');
 const fs = require('fs');
 const path = require('path');
 const resolvers = require('./resolvers');
@@ -12,7 +13,10 @@ const server = new ApolloServer({
   resolvers,
   formatError: (err) => {
     return { message: err.message };
-  }
+  },
+  plugins: [
+    ApolloServerPluginLandingPageGraphQLPlayground()
+  ]
 });
 
 server.listen({ port: 4002 }).then(({ url }) => {
