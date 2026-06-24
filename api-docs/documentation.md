@@ -1,28 +1,28 @@
-# 🏫 LAPORAN DOKUMENTASI SISTEM & API
+# SYSTEM & API DOCUMENTATION REPORT
 ## TEL-U ROOM HUB (FACILITY BOOKING SYSTEM)
 
 ---
 
-## 1. Arsitektur Sistem (System Architecture)
+## 1. System Architecture
 
-Sistem **Tel-U Room Hub** dirancang menggunakan arsitektur **GraphQL Microservices terdistribusi**. Terdiri dari 3 backend service independen (Apollo Server 3) yang berkomunikasi ke satu database MySQL yang sama. 
+The **Tel-U Room Hub** is designed using a **decentralized GraphQL Microservices architecture**. It consists of 3 independent backend services (Apollo Server 3) communicating with a single shared MySQL database.
 
-### Diagram Arsitektur
-Berikut adalah visualisasi arsitektur sistem yang menggambarkan interaksi antara Client, Microservices GraphQL, dan Database:
+### Architecture Diagram
+Below is the system architecture visualization representing the interactions between the Client, GraphQL Microservices, and the Database:
 
 ```mermaid
 graph TD
     %% Nodes
-    Client["💻 Client Frontend (Browser)"]
+    Client["Client Frontend (Browser)"]
     
     subgraph Microservices ["GraphQL Microservices"]
-        S1["🔍 Available Room Service (Port 4001)"]
-        S2["📅 Booking Room Service (Port 4002)"]
-        S3["⚙️ Room Management Service (Port 4003)"]
+        S1["Available Room Service (Port 4001)"]
+        S2["Booking Room Service (Port 4002)"]
+        S3["Room Management Service (Port 4003)"]
     end
     
-    DB[("🗄️ MySQL Database (Port 3306)")]
-    PMA["🌐 phpMyAdmin (Port 8080)"]
+    DB[("MySQL Database (Port 3306)")]
+    PMA["phpMyAdmin (Port 8080)"]
 
     %% Connections
     Client -->|GraphQL Queries| S1
@@ -36,41 +36,41 @@ graph TD
     PMA -->|Manage| DB
 ```
 
-### Detail Peran Layanan:
-1. **Available Room Service (Port 4001)**: Melayani pencarian dan filter ruangan yang berstatus kosong (tersedia).
-2. **Booking Room Service (Port 4002)**: Menangani mutasi pembuatan reservasi ruangan baru serta pembatalan reservasi.
-3. **Room Management Service (Port 4003)**: Menyediakan fungsi administratif bagi admin untuk memodifikasi inventaris ruangan (melihat semua, menambah, dan menghapus ruangan).
-4. **MySQL Database (Port 3306)**: Penyimpanan data utama untuk tabel `rooms` dan `bookings`.
+### Role of Each Service:
+1. **Available Room Service (Port 4001)**: Serves queries to filter and locate rooms that are currently vacant (available).
+2. **Booking Room Service (Port 4002)**: Handles mutations for creating new room reservations and cancelling existing bookings.
+3. **Room Management Service (Port 4003)**: Exposes administrative operations to modify the room inventory (list all, add new, and delete rooms).
+4. **MySQL Database (Port 3306)**: Serves as the central persistent storage for the `rooms` and `bookings` tables.
 
 ---
 
-## 2. ERD & Skema Tipe (ERD / Type Schema)
+## 2. ERD & Type Schema
 
 ### Entity Relationship Diagram (ERD)
-Sistem memiliki 2 entitas utama, yaitu `rooms` (ruangan) dan `bookings` (transaksi pemesanan) dengan relasi **One-to-Many** (satu ruangan dapat memiliki banyak riwayat booking).
+The system contains 2 primary entities: `rooms` and `bookings`, with a **One-to-Many** relationship (one room can have multiple booking transactions over time).
 
-* **rooms.id (PK)** berhubungan dengan **bookings.roomId (FK)**.
+* **rooms.id (PK)** is referenced by **bookings.roomId (FK)**.
 
-#### Skema Tabel Database MySQL
-1. **Tabel `rooms`** (Menyimpan data ruangan):
-   - `id` (VARCHAR(50), Primary Key) - Kode unik ruangan (misal: KU3.05.01)
-   - `name` (VARCHAR(100)) - Nama ruangan (misal: Integrated Lab Sandbox)
-   - `capacity` (INT) - Kapasitas maksimal orang
-   - `facility` (VARCHAR(255)) - Daftar fasilitas dipisahkan koma
-   - `isAvailable` (TINYINT(1)) - Ketersediaan (1 = Tersedia, 0 = Dibooking)
+#### MySQL Database Table Schemas
+1. **Table `rooms`** (Stores room configuration details):
+   - `id` (VARCHAR(50), Primary Key) - Unique identifier for the room (e.g. KU3.05.01)
+   - `name` (VARCHAR(100)) - Full room name (e.g. Integrated Lab Sandbox)
+   - `capacity` (INT) - Maximum seating capacity
+   - `facility` (VARCHAR(255)) - Comma-separated list of facilities
+   - `isAvailable` (TINYINT(1)) - Current status (1 = Available, 0 = Reserved)
 
-2. **Tabel `bookings`** (Menyimpan data reservasi):
-   - `id` (INT, Auto Increment, Primary Key) - ID transaksi booking
-   - `roomId` (VARCHAR(50), Foreign Key) - Kode ruangan yang dipesan
-   - `studentName` (VARCHAR(100)) - Nama lengkap mahasiswa
-   - `studentId` (VARCHAR(50)) - NIM mahasiswa
-   - `bookingTime` (DATETIME) - Jadwal waktu pemesanan
-   - `status` (VARCHAR(20)) - Status reservasi (CONFIRMED, CANCELLED)
+2. **Table `bookings`** (Stores transaction records):
+   - `id` (INT, Auto Increment, Primary Key) - Unique reservation ID
+   - `roomId` (VARCHAR(50), Foreign Key) - Associated room ID
+   - `studentName` (VARCHAR(100)) - Student full name
+   - `studentId` (VARCHAR(50)) - Student identification number (NIM)
+   - `bookingTime` (DATETIME) - Scheduled time of reservation
+   - `status` (VARCHAR(20)) - Status of reservation (CONFIRMED, CANCELLED)
 
 ---
 
-### Skema GraphQL (Type Schema)
-Berikut adalah representasi tipe data pada schema GraphQL untuk masing-masing objek:
+### GraphQL Type Schema
+The following represents the data models and operations declared in the GraphQL schemas:
 
 #### Object Types:
 ```graphql
@@ -116,45 +116,45 @@ type Mutation {
 
 ---
 
-## 3. Dokumentasi Pengujian API (Queries & Mutations)
+## 3. API Integration Testing (Queries & Mutations)
 
-Pengujian API dilakukan menggunakan halaman dokumentasi interaktif **Swagger UI** (OpenAPI Wrapper).
+API integration tests were performed using the interactive **Swagger UI** (OpenAPI Wrapper).
 
-### Screenshot Hasil Eksekusi Query getAvailableRooms
-Di bawah ini adalah screenshot riil saat kueri dikirimkan ke server melalui antarmuka Swagger dan sukses mengembalikan respon JSON `200` dari basis data:
+### Execution Screenshot: getAvailableRooms Query
+Below is the execution result showing Swagger UI successfully sending a request to the local available rooms service and receiving a `200 OK` JSON response from the database:
 
 ![Swagger Query Screenshot](swagger_query.png)
 
 ---
 
-## 4. Tampilan Aplikasi Klien (Client Application)
+## 4. Client Application User Interface
 
-Aplikasi klien dibuat menggunakan antarmuka Single Page Application (SPA) responsif berbasis Tailwind CSS. Aplikasi terhubung langsung secara real-time ke masing-masing port microservices.
+The frontend client is implemented as a responsive Single Page Application (SPA) styled with Tailwind CSS. It communicates directly with the respective port mappings of the GraphQL backend.
 
-### Screenshot Student View (Daftar Ruangan Tersedia)
-Berikut adalah tampilan halaman depan (Student View) yang menampilkan kartu-kartu ruangan kosong yang siap dipesan oleh mahasiswa:
+### User Interface Screenshot: Student View
+Here is the front-facing screen (Student View) showing the room list fetched dynamically from the database:
 
 ![Client App Screenshot](client_app.png)
 
 ---
 
-## 5. Panduan Instalasi & Menjalankan (Installation Guide)
+## 5. Installation & Setup Guide
 
-### Persyaratan Awal (Prerequisites)
-1. **Node.js** (Versi 16 atau ke atas)
-2. **XAMPP** (Untuk mengaktifkan database MySQL)
+### Prerequisites
+1. **Node.js** (Version 16 or higher)
+2. **XAMPP** (For local MySQL database server)
 
-### Langkah-Langkah Menjalankan:
+### Step-by-Step Setup:
 
-1. **Persiapan Database XAMPP**:
-   - Buka **XAMPP Control Panel** di komputer Anda.
-   - Klik **Start** pada modul **MySQL**.
-   - Buka phpMyAdmin di browser Anda (`http://localhost/phpmyadmin`).
-   - Buat database baru bernama **`telu_room_hub_eai`**.
-   - Klik database tersebut, buka tab **Import**, pilih file **`api-docs/schema.sql`** di folder proyek Anda, lalu jalankan import.
+1. **Database Setup in XAMPP**:
+   - Launch the **XAMPP Control Panel**.
+   - Click **Start** next to the **MySQL** module.
+   - Access phpMyAdmin at `http://localhost/phpmyadmin`.
+   - Create a new database named **`telu_room_hub_eai`**.
+   - Select the database, navigate to the **Import** tab, choose the file **`api-docs/schema.sql`** from your workspace, and click import.
 
-2. **Menjalankan Microservices Backend**:
-   Buka terminal di VS Code, lalu jalankan perintah berikut untuk menginstal dependensi dan memulai server:
+2. **Starting the GraphQL Microservices**:
+   Open three separate terminal windows in VS Code and execute the following commands:
    
    * **Terminal 1 (View Available Room Service)**:
      ```bash
@@ -175,5 +175,5 @@ Berikut adalah tampilan halaman depan (Student View) yang menampilkan kartu-kart
      npm start
      ```
 
-3. **Menjalankan Frontend**:
-   - Cukup buka file **`client/index.html`** langsung di web browser Chrome atau Edge Anda. Aplikasi sudah siap digunakan secara interaktif!
+3. **Running the Frontend Client**:
+   - Double-click the file **`client/index.html`** in your file manager to open it in a web browser. The client application is now live and interactive!
