@@ -10,6 +10,8 @@ services:
       - /usr/src/app/node_modules
     depends_on:
       - db
+    environment:
+      - DB_HOST=db
 
   booking-room-service:
     build:
@@ -22,6 +24,8 @@ services:
       - /usr/src/app/node_modules
     depends_on:
       - db
+    environment:
+      - DB_HOST=db
 
   room-management-service:
     build:
@@ -34,6 +38,8 @@ services:
       - /usr/src/app/node_modules
     depends_on:
       - db
+    environment:
+      - DB_HOST=db
 
   db:
     image: mysql:8.0
